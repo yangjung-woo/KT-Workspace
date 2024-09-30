@@ -1,0 +1,29 @@
+# 문제 접근: 어? 배열 크기가 최대  100*100 = > 10^4이네?
+# arr1 , arr2 이중 for문을 돌아도 10^8 << 아슬아슬하게 시간초과는 아닐듯
+# 구현 
+# 1. 행렬의 곱은 arr1의 열의 길이와 , arr2의 행의 길이가 일치해야 함
+#     arr1.shape = (3 ,2 )  , arr2.shape(2 ,3 )  결과 (3,3) : arr1의 행, ,arr2의 열
+#     len(arr)  = arr의 행 길이 
+#     len(arr[0]) = arr의 열 길이 
+
+def solution(arr1, arr2):
+    answer = []
+    m, n, r = len(arr1), len(arr1[0]), len(arr2[0])
+    arr1_rows = len(arr1)
+    arr1_columns = len(arr1[0])
+    
+    #arr2_rows = len(arr2)  행렬곱에서 arr2의 행 요소만 가져오기 때문에 행 번호는 필요 없음 
+    # 행=고정 , 열= 0,1,2..N   
+    arr2_columns = len(arr2[0])
+    
+    for i in range(arr1_rows):
+        hang_arr1 = arr1[i]
+        result = [] # 행렬곱 결과 저장용
+        for j in range(arr2_columns):
+            s = 0
+            for k in range(arr1_columns):
+                s += hang_arr1[k] * arr2[k][j] # 행렬곱 arr1의 행 과 arr2의 열 들을 곱한 합
+            result.append(s)
+        answer.append(result)
+
+    return answer

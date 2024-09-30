@@ -1,0 +1,40 @@
+# 문제 파악 : 종류:의상 >> key-value 자료 구조를 사용하면 되지 않을까?
+
+# 해시 테이블 : 파이썬은 딕셔너리 사용
+def solution(clothes):
+    cloth_table = {}
+    for value , key in clothes:
+        if key in cloth_table.keys():  # key가 이미 있으면 , 기존 key에 추가 
+            cloth_table[key] += [value]
+        else: # key가 없으면 , 신규 추가 
+            cloth_table[key] = [value]
+
+    # A 타입  a개 , B타입 b개 를 타입당 반드시 1개 조합하는 모든 경우의 수 = (a)*(b)..
+    # A 타입 또는 B 타입 상관없이 1개만 입는 경우의 수  a + b ...
+    # answer = a*b + (a +b) 
+    ''' 
+    잘못된 접근법(틀렸음 )
+    print(cloth_table)
+    case1 = 1
+    case2 = 0  
+    
+    if len(cloth_table.keys()) ==1: # key가 1개 뿐일 경우 제외 
+        for k , v in cloth_table.items():
+            case1 *= (len(v)) # a * b ....
+    else:
+        for k , v in cloth_table.items():
+            case1 *= (len(v)) # a * b ....
+            case2 += (len(v)) # a + b ...
+            
+    #print(case1,case2)
+    answer = case1 +case2
+    '''
+    # A타입 a개를 입는 경우의 수는  a개 + 1(안입음)
+    # B타입 b개를 입는 경우의 수는  b개 + 1(안입음)
+    # 아무것도 안 입는 경우의 수는 없음  (-1)
+    answer = 1
+    for key ,value in cloth_table.items():
+        answer = answer*(len(value)+1)
+    
+    
+    return answer-1 # 아무것도안입는 경우 제외 
