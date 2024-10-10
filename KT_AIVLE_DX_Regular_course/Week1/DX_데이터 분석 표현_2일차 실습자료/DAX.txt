@@ -1,0 +1,39 @@
+Chapter 3. 보고서 작성 사전준비
+
+Unit 2. 최소한 갖춰야 할 사전준비- 날짜와 기본 측정값
+
+- 날짜 테이블 만들기
+D_Dates = CALENDAR( MIN(F_Sales[OrderDate]), MAX(F_Sales[OrderDate]) )
+
+- 날짜 테이블에 새 열 추가하기
+Year = YEAR( D_Dates[Date] )
+Quarter = QUARTER( D_Dates[Date] )
+Month = MONTH( D_Dates[Date] )
+Week = WEEKNUM( D_Dates[Date] )
+Day = DAY( D_Dates[Date] )
+
+
+Unit 3. DAX 함수- 새 열 Vs. 새 측정값
+
+- F_Sales 테이블에 새 열 만들기
+판매가 = DIVIDE(F_Sales[Amt], F_Sales[Qty])
+
+- 새 측정값 만들기
+총매출액 = SUM(F_Sales[Amt])
+
+
+Chapter 4. 계층 구조 분석 차트
+
+Unit 3. 계층구조 만들기① : 상품 카테고리
+- 측정값
+작년 총매출액 = CALCULATE([총매출액], SAMEPERIODLASTYEAR(D_Dates[Date]))
+매출성장액 = [총매출액] - [작년 총매출액]
+%매출성장율 = DIVIDE([매출성장액], [작년 총매출액])
+
+Unit 3. 계층구조 분석차트③ : 지역(지도)
+- 새 열 만들기
+Addr3 = [Addr1] & " " & [Addr2]
+
+
+
+
