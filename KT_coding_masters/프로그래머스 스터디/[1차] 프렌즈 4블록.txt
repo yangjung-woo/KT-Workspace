@@ -1,0 +1,64 @@
+# 문제접근
+# 반복문 (더이상 지울게 없을때 까지)
+# 1. 전체 nxn 맵에서 2x2 가 전부 같은 문자면 지울 수 있음 
+#  1-1 2x2 가 발견되었을때 즉시 지울경우 문제가 발생 (중복 2x2가 깨짐 )
+#  1-2 바로 지우지 말고 좌표를 기록만 하고 일괄적으로 지우기
+
+# 2. 지운후 아래로 down 해주는 게 필요
+
+from collections import deque
+def erase_2x2(matrix): # 2x2 블럭 위치좌표를 기록
+    empty_set = set()  # 중복되는 좌표가 있음을 막기 위해 set 자료형 
+    for i in range(len(matrix)-1):
+        for j in range(len(matrix[0])-1):
+            if matrix[i][j] == matrix[i+1][j] == matrix[i][j+1] == matrix[i+1][j+1] != '0':
+                empty_set.add((i,j))
+                empty_set.add((i+1,j))
+                empty_set.add((i,j+1))
+                empty_set.add((i+1,j+1))
+    return empty_set
+    
+    
+'''
+
+4  4   ^
+3  3   ^
+2  2   ^
+1  1   ^   순으로 탐색  
+'''               
+def gravity(matrix): # 중력 적용 , 아래서 부터 0으로 채워진 공간이 있다면 전부 내리
+    # matrix[i][j]  i = n-1 ~ 0 까지
+    
+    for j in range(len(matrix[0])):
+        q = deque([])
+            
+        # 격자의 밑에서부터 탐색
+        for i in range(len(matrix)-1,-1,-1):
+            if matrix[i][j] == '0':
+                q.append((i,j))  # 빈공간이 있으면 queue에 넣고 
+            else:
+                if q:#  아래 빈공간이 있으면서  [i][j] != 0 인 경우 
+                    qi, qj  = q.popleft()
+                    matrix[qi][qj] = matrix[i][j] # 빈 공간에 현재 블럭을 채움 
+                    matrix[i][j] = '0' # 내려왔으니 공백 
+                    q.append((i, j))  # 내려오면서 생긴 공백 역시 queue에 추가 
+    return matrix
+    
+def solution(m, n, board):
+    answer = 0
+    board = list(map(lambda x: list(x), board)) # 문자열을 list로 바꿔서 nxn board가 되도록
+    
+    while (True):
+        empty_set = erase_2x2(board)
+        
+        if empty_set: # 빈공간이 있음 
+            for i ,j in empty_set:
+                board[i][j] = '0'
+            answer += len(empty_set)
+            # 중력 적용
+            board = gravity(board)
+            # 빈공간 저장 초기화
+            empty_set.clear()
+        else:# 빈공간이 없으면 탈출
+            break 
+    return answer
