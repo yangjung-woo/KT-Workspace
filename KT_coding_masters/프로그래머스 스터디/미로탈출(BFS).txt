@@ -1,0 +1,51 @@
+# 문제접근 : BFS 를 두번 사용 1. 시작-> 레버 / 2. 레버 -> 탈출 
+# 필요 함수 , 맵에서 시작지점 좌표를 찾을 함수가 필요 find_start 
+# 
+from collections import deque
+
+def find_start(start , maps):
+    n = len(maps)       # 세로
+    m = len(maps[0])    # 가로
+     # 초깃값 설정
+    for i in range(n):
+        for j in range(m):
+        	# 출발하고자 하는 지점이라면 시작점의 좌표를 기록함
+            if maps[i][j] == start: 
+                return (i,j)
+
+
+def BFS (start , target,maps):
+    dy = [0,1,0,-1]
+    dx = [1,0,-1,0]
+    n = len(maps)
+    m = len(maps[0])
+    visited = [[False] * m for _ in range(n)]
+    queue = deque()
+    
+    # 출발 지점 , 목표 지점의 좌표를 알아야 함(완전탐색)
+    sy,sx =find_start(start,maps)
+    queue.append((sy,sx,0))
+    visited[sy][sx] = True
+    # queue 탐색
+    while queue:
+        y , x ,cost = queue.popleft()
+        
+        if maps[y][x] ==target:
+            return cost
+        
+        for i in range(4):
+            ny = y +dy[i]
+            nx = x +dx[i]
+            if 0<= nx < m and 0<= ny < n and visited[ny][nx] ==False and maps[ny][nx] != 'X':
+                queue.append((ny,nx,cost+1))
+                visited[ny][nx] = True
+    return -1# 결국 못찾으면 -1 리턴 
+
+    
+def solution(maps):
+    Lever_cost = BFS('S','L',maps)
+    Exit_cost = BFS('L','E',maps)
+    if Lever_cost !=-1  and Exit_cost != -1:
+        return Lever_cost + Exit_cost
+    else:
+        return -1

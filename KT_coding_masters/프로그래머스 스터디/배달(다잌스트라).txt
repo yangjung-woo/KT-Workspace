@@ -1,0 +1,50 @@
+# 노드들간 최단거리를 구해놓고 (다익스트라 알고리즘 )
+# K 이하로 탐색 가능한 정점들 개수를 반환해주면 된다 
+
+# 다익스트라 (필자는 모르면 외워야지를 실천하는중이다.)
+# 
+# 1. 출발 노드를 설정한다
+# 2. 출발 노드 기준 ,  각 노드의 최소 비용을 저장
+# 3. 방문하지 않은 노드들 중,  가장 비용이 적은 노드를 선택 (최소 힙 사용)
+# 4. 해당 노드(가장 적은 비용이 드는 노드)로 가능 경우를 고려해서 최소비용 갱신
+# 5. 3~4 반복
+import heapq
+def dijkstra(dist, adj):
+    # 1. 출발 노드를 설정 , 출발노드는 1, 거리는 0 
+    heap = []
+    heapq.heappush(heap,[0,1]) # [거리,노드] 거리 기준 최소 힙 
+    while heap:
+        cost , node = heapq.heappop(heap)
+        # 2. 출발 노드 기준 ,  각 노드의 최소 비용을 저장
+        # 3. 방문하지 않은 노드들 중,  가장 비용이 적은 노드를 선택 (최소 힙 사용)
+        #   3-1. 본 딕셔너리는 {1:{...} 2:{...} 3:{...} 4:{...}} 모든 정점을 한번 씩 순회하도록 했기에 
+        #        방문하지 않은 노드를 고려하지 않음 
+        for neighbor , weight in adj[node].items():
+            if cost + weight < dist[neighbor]:  #4. 해당 노드(가장 적은 비용이 드는 노드)로 가능 경우를 고려해서 최소비용 갱신 
+                dist[neighbor] = cost + weight
+                heapq.heappush(heap , [cost+weight , neighbor ])
+
+def solution(N, road, K):
+    # 1번 마을부터 
+    dist = [500001]*(N +1) #1 부터  N 까지  최단거리저장 dist 생성 , K <=500000
+    dist[1] = 0 # 1부터 탐색 할거야 거리=0
+    adj = {i: {}for i in range(1,N+1)}
+    
+    '''
+        dict ={
+                A : {   B : 5 
+                        C : 3
+                        D : 7 ...
+                }
+            
+        }
+    '''
+    # 최초 거리정보 기록 
+    for r in road: # road[0]  = [a ,b ,d] 시작,도착,거리
+        # 인접 노드와 거리를 딕셔너리에 추가
+        if r[1] not in adj[r[0]] or adj[r[0]][r[1]] > r[2]: # 최단 거리만 저장 
+            adj[r[0]][r[1]]  = r[2]
+        if r[0] not in adj[r[1]] or adj[r[1]][r[0]] > r[2]: # 최단 거리만 저장 
+            adj[r[1]][r[0]]  = r[2]
+    dijkstra(dist , adj) # 최단거리정보 , 인접노드 딕셔너리 입력 
+    return len([i for i in dist if i <= K])

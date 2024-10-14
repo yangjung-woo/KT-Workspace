@@ -1,0 +1,50 @@
+# 문제접근 : melody를 ?분만큼 반복시키고 , 그 안에 m 이 있으면 곡의 제목을 반환 
+# 
+# musicinfos = [시작,종료,제목,반복되는악보]
+# m = 네오가 들은 멜로디 일부(반복이 될 수 있음)
+
+# 필요 전처리 
+# 1. C# 의 경우 문자 2개가 되어 햇갈림 => c 소문자로 변경 
+def change_sh(melody):
+    melody = melody.replace('C#', 'c')
+    melody = melody.replace('D#', 'd')
+    melody = melody.replace('F#', 'f')
+    melody = melody.replace('G#', 'g')
+    melody = melody.replace('A#', 'a')
+    melody = melody.replace('B#', 'b')# 슈발 B#은 문제에 없었잖아
+    return melody
+
+# 2. 시간을 분 단위로 변경 
+def hour_to_minute(start,end):
+    start_hour, start_minute = map(int, start.split(':'))
+    end_hour, end_minute = map(int, end.split(':'))
+    total_hour = end_hour - start_hour
+    total = end_minute - start_minute + (60*total_hour)
+    return total 
+
+def solution(m, musicinfos):
+    m = change_sh(m)
+    answer = '(None)'  # 조건이 일치하는 음악이 없을 때에는 “(None)”을 반환한다.
+    length_m = 0
+    
+    for info in musicinfos:
+        start, end, title, melody = info.split(',')
+        time = hour_to_minute(start,end)# 시간변환
+        melody = change_sh(melody)# # 변환 
+        
+        # 재생시간동안 멜로디를 반복 재생
+        play_melody = (melody * (time // len(melody))) + melody[:time % len(melody)]
+        
+        # 기억한 멜로디가 재생된 멜로디에 포함되는지 확인
+        if m in play_melody:
+            # 조건이 일치하는 음악이 여러 개일 때에는 라디오에서 재생된 시간이 제일 긴 음악 제목을 반환한다. 
+            # 재생된 시간도 같을 경우 먼저 입력된 음악 제목을 반환한다.(musicinfos를 입력 순서대로 순회하기에 만족)
+            if time > length_m:  # 재생 시간이 더 긴 곡을 선택
+                answer = title
+                length_m = time
+    
+    return answer
+
+# 통과못한 케이스들
+# 22, 23 ,24 ,29 ,  >> # 조건이 일치하는 음악이 없을 때에는 “(None)”을 반환한다
+# 34 를 통과 못함 ????? >> B#이 있음 쓔발

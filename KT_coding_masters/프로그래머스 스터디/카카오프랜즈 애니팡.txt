@@ -21,7 +21,6 @@ def erase_2x2(m,n,board):
     return empty_set
 
 '''
-
 4  4   ^
 3  3   ^
 2  2   ^
