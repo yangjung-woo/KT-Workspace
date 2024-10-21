@@ -2,12 +2,13 @@
 # K 이하로 탐색 가능한 정점들 개수를 반환해주면 된다 
 
 # 다익스트라 (필자는 모르면 외워야지를 실천하는중이다.)
-# 
 # 1. 출발 노드를 설정한다
 # 2. 출발 노드 기준 ,  각 노드의 최소 비용을 저장
 # 3. 방문하지 않은 노드들 중,  가장 비용이 적은 노드를 선택 (최소 힙 사용)
 # 4. 해당 노드(가장 적은 비용이 드는 노드)로 가능 경우를 고려해서 최소비용 갱신
 # 5. 3~4 반복
+
+
 import heapq
 def dijkstra(dist, adj):
     # 1. 출발 노드를 설정 , 출발노드는 1, 거리는 0 
@@ -20,7 +21,8 @@ def dijkstra(dist, adj):
         #   3-1. 본 딕셔너리는 {1:{...} 2:{...} 3:{...} 4:{...}} 모든 정점을 한번 씩 순회하도록 했기에 
         #        방문하지 않은 노드를 고려하지 않음 
         for neighbor , weight in adj[node].items():
-            if cost + weight < dist[neighbor]:  #4. 해당 노드(가장 적은 비용이 드는 노드)로 가능 경우를 고려해서 최소비용 갱신 
+            if cost + weight < dist[neighbor]:  
+		#4. 해당 노드(가장 적은 비용이 드는 노드)로 가능 경우를 고려해서 최소비용 갱신 
                 dist[neighbor] = cost + weight
                 heapq.heappush(heap , [cost+weight , neighbor ])
 
