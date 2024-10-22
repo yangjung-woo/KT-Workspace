@@ -1,0 +1,39 @@
+# 정확성과 효율성 테스트 각각 점수가 있는 문제 ?? > 시간복잡도 꼭 생각
+# 문제접근 (완전탐색) O(N)
+# 1. 매 단계마다 stones - = 1 해서 0이 k개 이상 연달아 있으면 종료
+# 'stones 배열 각 원소들의 값은 1 이상 200,000,000 이하' : 10**8 > 시간초과 크악 씨 이 빨 
+# 바로 알고리즘 정상화 
+
+# 문제접근(이분탐색) O(logN) 투 포인터 
+# 0. 사전 세팅 left =1 , rignt = max , mid = (right +left)//2
+# 1. 디딤돌을 전부 밟으며 지나감  for s 
+#   1 - 1 만약 s - mid <=0 이면 skip해서 지나가야함 > 
+#        아니면  skip해서 지나갈 필요 없음 
+#   1 - 2. skip해서 지나가는게 연달아 k 이상이면 종료  > right = mid 
+# 2. 
+
+def solution(stones, k):
+    left = 1
+    right = 200000000
+    while(left <= right):
+        mid = (left + right)//2
+        skip_step = 0
+        flag = False
+        for s in stones:
+            if s - mid <= 0:
+                skip_step +=1 
+            else:
+                skip_step=0 # 연달아 있는게 아니면 다시 초기화
+            if skip_step >= k:# 연달아 k 이상이면 종료
+                flag = True
+                break
+                
+        if flag: # 징검다리 못지나가 
+            right = mid -1
+            # right = mid (실패)
+            # mid 가 정답이 아님 > right = mid<< 쓸모없는 연산이 하나 더 추가됨
+        else:
+            left = mid +1 
+            # left = mid(실패)
+            # mid 가 정답이 아님 > left = mid<< 쓸모없는 연산이 하나 더 추가됨
+    return left
