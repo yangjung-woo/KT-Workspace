@@ -1,0 +1,121 @@
+
+# 데이터 학습용, 평가용 분리 
+from sklearn.model_selection import train_test_split
+
+x_train , x_test , y_train , y_test = train_test_split(x,y,test_size = 0.3, random_state=1)# random seed 고정 
+
+
+# 선형 회귀 모델링 
+from sklearn.linear_model import LinearRegression
+from sklearn.metrics import mean_absolute_error , r2_score
+# 2단계: 선언하기
+model = LinearRegression()
+# 3단계: 학습하기
+model.fit(x_train,y_train)
+# 4단계: 예측하기
+y_predict = model.predict(x_test)
+# 5단계: 평가하기(회귀모델)
+print('MAE: ', mean_absolute_error(y_test,y_pred))
+print('R2-score: ', r2_score(y_test,y_pred))
+
+# 5단계 평가하기(분류모델)
+print(confusion_matrix(y_test, y_pred))
+print('Classification Report  :' , classification_report(y_test, y_pred ))
+
+#로지스틱회귀(분류모델)
+from sklearn.linear_model import LogisticRegression
+model = LogisticRegression()# max_iter = 100 default , 100번 분석함 
+model.fit(x_train, y_train)
+y_pred = model.predict(x_test)
+# 5단계 평가하기
+print(confusion_matrix(y_test,y_pred))
+print(classification_report(y_test,y_pred))
+
+# 로지스틱 회귀계수와 상수 확인
+print(list(x))
+print(model.coef_.round(3))
+print(model.intercept_.round(3))
+
+# 서포트 벡터머신 , K-NN 분류시 반드시 정규화 과정이 필요함 
+from sklearn.preprocessing import MinMaxScaler
+
+# 정규화
+scaler = MinMaxScaler()
+x_train = scaler.fit_transform(x_train)
+x_test = scaler.transform(x_test)
+
+from sklearn.svm import SVC
+model = SVC(kernel ='linear',C=1)
+
+# k 분할 교차 검증 
+from sklearn.model_selection import cross_val_score
+model = DecisionTreeClassifier(max_depth=5,  random_state=1) # default = Accuracy
+cv_score = cross_val_score(model, x_train, y_train, cv=10)
+
+# 확인
+print(cv_score)
+print('평균:', cv_score.mean()) # 정확도 
+print('표준편차:', cv_score.std())
+
+
+# GridSearch 로 최적의 파라미터 확인 
+
+
+ param = {'max_depth': range(1, 51, 1)}#찾을 파라미터 범위 
+
+# 불러오기
+from sklearn.model_selection import GridSearchCV # CV = cross value
+
+# 선언하기
+
+# Grid Search 선언
+  # cv=5
+  # scoring='r2'
+model = GridSearchCV(DecisionTreeRegressor(random_state=1), # 기본 모델
+                     param,                 # 파라미터 범위
+                     cv = 5)                # k 폴드 개수
+                     # scoring ='r2' 평가지표
+                    # 주의! GridSearchCV는 scoring대상 점수가 높은거를 최적의 모델로 인식
+                    # Scoring = 'MAE', 'MSE' 를 할 경우 문제 발생 
+                    # scoring = 'neg_mean..' 음수로 변환 지표를 평가로씀
+
+model.fit(x_train, y_train) # 최적의 파라미터로 튜님된 모델을 학습시킴
+
+# 중요 정보 확인
+print('=' * 80)
+print(model.cv_results_['mean_test_score'])# 테스트로 얻은 성능
+print('-' * 80)
+print('최적파라미터:', model.best_params_)# 
+print('-' * 80)
+print('최고성능:', model.best_score_)
+print('=' * 80)
+
+# 변수 중요도
+plt.figure(figsize=(5, 5))
+plt.barh(y=list(x), width=model.best_estimator_.feature_importances_)
+plt.show()
+
+# 앙상블  XGBoost로 knn ,의사결정나무 , 로지스틱회귀 , 랜덤포레스트 모델을 앙상블 학습 
+from xgboost import XGBClassifier
+model = XGBClassifier(max_depth = 5)
+model.fit(x_train,y_train)
+y_pred = model.predict(x_test)
+# 평가하기
+print(confusion_matrix(y_test,y_pred))
+print(classification_report(y_test,y_pred))
+
+# Feature 중요도 확인
+plt.barh(x.keys(), model.feature_importances_)
+plt.show()
+
+
+# 앙상블 lightGBM 단 사전에 모든 데이터들은 0, 1 로 이루어져야 함(가변수화 필수)
+from lightgbm import LGBMClassifier
+model = LGBMClassifier(max_depth = 5,verbose = -1, importance_type = 'gain') 
+model.fit(x_train, y_train) # 좀더 복잡하게 모델 생성함  > verbose = -1 하면 학습 과정을 굳이 출력 안해줌
+y_pred = model.predict(x_test)
+# Feature 중요도 확인
+tmp = model.feature_importances_
+tmp_norm = tmp / np.sum(tmp)
+plt.barh(x.keys(),tmp_norm)
+plt.show()
