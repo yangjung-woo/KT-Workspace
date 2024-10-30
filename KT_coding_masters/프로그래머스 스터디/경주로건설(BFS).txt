@@ -1,0 +1,46 @@
+# 문제접근 
+# 1. BFS 탐색 문제 + 최소 비용을 반환해야 하므로 DP 
+# 2. BFS는 최단거리를 보장함 , 그러면 최대한 코너를 적게 만들도록 도착점을 선택 
+# 3. queue에 방문할 노드 + 직전 방향(z)와 비용(c)를 함께 저장하고 , BFS 탐색
+from collections import deque
+
+def BFS(board ,to):
+    dx = [0,1,0,-1]
+    dy = [1,0,-1,0]
+    n = len(board)
+    # visited = [[False]*n for _ in n] 방문을 기록할 visited 대신 
+    # 최소 비용을 저장할 price map 생성
+    price = [[10**8] * n for _ in range(n)]
+    price[0][0] = 0
+    queue = deque()
+    queue.append((0, 0, 0, to))  # (시작X, 시작Y, 시작Cost, 시작방향)
+    
+    while queue:
+        x,y,c,z = queue.popleft()
+        
+        if x == n - 1 and y == n - 1: # 목적지 도착 
+            continue
+
+        for i in range(4):
+            nx = x + dx[i]
+            ny = y + dy[i]
+            nz = i
+            if (nx < 0 or nx >= n or ny < 0 or ny >= n) or board[nx][ny] == 1: # 맵 범위를 벗어남
+                continue
+
+            if nz == z: # 이전 방향(z)와 이동항 
+                nc = c + 100
+            else:  #  이전방향 z 와 다르면 (코너)
+                nc = c + 600
+            if nc < price[nx][ny]:
+                price[nx][ny] = nc
+                queue.append((nx, ny, nc, i))
+
+    return price[n-1][n-1] # 
+        
+        
+    
+    
+def solution(board):
+    answer = min(BFS(board, 0), BFS(board, 1)) # 방향은 2가지 1. 아래방향  , 2 우측방향
+    return answer

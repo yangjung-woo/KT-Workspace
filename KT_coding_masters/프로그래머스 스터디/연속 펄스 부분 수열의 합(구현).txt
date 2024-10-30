@@ -1,0 +1,22 @@
+# 문제접근 
+# 딱히 알고리즘이 떠오르지 않음 : 그냥 구현문제?
+# Sequence의 길이 : 10**5  ,  O(N) i = 0 ~ 500,000 중에서 가장 큰 값이 나오면 갱신 
+def solution(sequence):
+    
+    answer = 0
+    s1 = 0
+    s2 = 0
+    s1_min = 0
+    s2_min = 0
+    pulse =1
+    for i in range(len(sequence)):
+        s1 += sequence[i] * pulse
+        s2 += sequence[i] * (-pulse)
+        
+        answer = max(answer, s1-s1_min, s2-s2_min)
+        
+        s1_min = min(s1_min, s1)
+        s2_min = min(s2_min, s2)
+        
+        pulse *= -1
+    return answer
