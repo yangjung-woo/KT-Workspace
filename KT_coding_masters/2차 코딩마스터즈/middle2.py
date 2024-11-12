@@ -30,7 +30,7 @@ def is_good_array(N, a):
             if other_pos != pos: # 서로 다른 숫자들에 대해서 위치 확인 
                 j, q = other_pos
                 # 겹치는 페어가 있는지 확인
-                if i < j < p < q: #  or j < i < q < p:
+                if i < j < p < q: 
                     return ("NO")
     
     return ("YES")
