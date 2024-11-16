@@ -7,7 +7,6 @@ def solution(n, money):
     dp[0] = 1 # 0원의 경우 거슬러주는 건 단 한가지 
     
     for coin in money:
-        
         for price in range(coin, n+1):
             if price >= coin:
                 #n원 이하까지의 금액(price)을 만들 수 있는 경우의 수를 dp 리스트에 넣어준다.

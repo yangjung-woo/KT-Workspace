@@ -15,3 +15,6 @@ def solution(a):
             minRear = a[-1-i]
             result[-1-i] = True
     return sum(result)
+
+
+# 풍선이 살아남
