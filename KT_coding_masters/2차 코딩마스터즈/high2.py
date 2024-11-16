@@ -16,27 +16,33 @@
 # 난관: N이 최대  10**12 << DP 를 한다 해도 시간초과가 날 수 밖에 없음
 # 파훼법: 분할정복 > 
 
+# 피보나치 수열은 
+#  Fn  =   [[1,1]] **N   * [F(1)=1  
+#          [[1,0]]          F(0)=0]
+
 # 피보나치 수열의 점화식을 행렬 형태로 변환하여 분할 정복 방식으로 계산하면 시간 복잡도를  O(logN)으로 줄일 수 있음 
 # 백준 11444 피보나치 수 6  (골드3 , 분할정복 문제 )
 # 참고자료 https://velog.io/@ledcost/%EB%B0%B1%EC%A4%80-11444-%ED%8C%8C%EC%9D%B4%EC%8D%AC-%ED%94%BC%EB%B3%B4%EB%82%98%EC%B9%98-%EC%88%98-6-%EA%B3%A8%EB%93%9C3-%EB%B6%84%ED%95%A0-%EC%A0%95%EB%B3%B5 
 MOD = 1_000_000_007
 
-def matrix_multiply(A, B): # 행렬 연산 결과를 반환 
-    return [
-        [(A[0][0] * B[0][0] + A[0][1] * B[1][0]) % MOD, (A[0][0] * B[0][1] + A[0][1] * B[1][1]) % MOD],
-        [(A[1][0] * B[0][0] + A[1][1] * B[1][0]) % MOD, (A[1][0] * B[0][1] + A[1][1] * B[1][1]) % MOD]
-    ]
+def matrix_multiply(A, B):  # A x B 행렬연산
+    # 결과 행렬 초기화
+    result = [[0, 0], [0, 0]]
+    # 행렬 A와 B의 곱셈
+    for i in range(2):  
+        for j in range(2):  
+            for k in range(2): # A의 열과 B의행 곱
+                result[i][j] = (result[i][j] + A[i][k] * B[k][j]) % MOD
+    return result
 
-def matrix_pow(mat, exp): # 행렬을 N번 제곱해서 N+1번째 피보나치 수 계산 
+def matrix_pow(base, N): # 행렬의 N 제곱을 이진 제곱법을 사용해서 O(logN)으로 수행
     result = [[1, 0], [0, 1]]  # 단위 행렬
-    base = mat
     
-    while exp > 0:
-        if exp % 2 == 1:
+    while N > 0:
+        if N % 2 == 1:
             result = matrix_multiply(result, base)
         base = matrix_multiply(base, base)
-        exp //= 2
-    
+        N //= 2
     return result
 
 def count_mold(N): # 곰팡이 개체 수 반환 
