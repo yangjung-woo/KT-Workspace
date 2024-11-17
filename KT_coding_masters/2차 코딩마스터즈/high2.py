@@ -58,8 +58,6 @@ def count_mold(N): # 곰팡이 개체 수 반환
     # 피보나치 수열 f(N)을 구하기 위해 result[0][0]을 반환
     return result[0][0]
 
-# 입력
 N = int(input())
 
-# 출력
 print(count_mold(N))
