@@ -24,7 +24,7 @@ for _ in range(1440 // k):  # 최대 1440번 반복
     hour %= 24
     
 # 디버깅용 출력 (필요 없으면 제거 가능) 
-print(seen_times)
+# print(seen_times)
 
 print(count)
     
