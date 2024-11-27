@@ -1,59 +1,53 @@
-def get_min_max_islands(world_map):
-    n = len(world_map)
-    min_islands = 0
+def find_islands(map_string):
+    # 1. 기본 섬 개수 계산: 양옆이 'o'인 'g'만 카운트
+    initial_islands = count_initial_islands(map_string)
+    
+    # 2. 최대 섬 개수 계산: 'x'를 적절히 'g'로 변환
+    max_islands = calculate_max_islands(map_string)
+    
+    return initial_islands, max_islands
+
+def count_initial_islands(map_string):
+    # 양옆이 'o'로 둘러싸인 'g'만 카운트
+    count = 0
+    for i in range(1, len(map_string) - 1):
+        if map_string[i] == 'g' and map_string[i - 1] == 'o' and map_string[i + 1] == 'o':
+            count += 1
+    return count
+
+def calculate_max_islands(map_string):
+    # 'x'를 'g'로 바꿔 가능한 최대 섬 개수를 계산
     max_islands = 0
+    n = len(map_string)
+    arr = list(map_string)
     
-    # 현재 확인된 섬의 개수 (x가 아닌 부분에서의 섬)
-    current_islands = 0
+    # 모든 'x'를 'g'로 변환한 상태에서 섬 개수 계산
+    for i in range(n):
+        if arr[i] == 'x':
+            arr[i] = 'g'
+    max_islands = count_total_islands(''.join(arr))
     
-    # 연속된 땅 여부
-    is_land = False
-    
-    # x의 연속된 그룹을 찾아서 처리
-    i = 0
-    while i < n:
-        if world_map[i] == 'x':
-            # x의 연속된 부분 찾기
-            x_start = i
-            while i < n and world_map[i] == 'x':
-                i += 1
-            x_end = i - 1
-            
-            # x 그룹 앞뒤의 문자 확인
-            left_char = world_map[x_start - 1] if x_start > 0 else 'o'
-            right_char = world_map[x_end + 1] if x_end < n - 1 else 'o'
-            
-            # 최대값 계산을 위한 x 그룹 처리
-            if x_end - x_start + 1 >= 2:  # x가 2개 이상이면
-                if left_char == 'o' and right_char == 'o':
-                    max_islands += 2  # 최대 2개의 섬 생성 가능
-                elif left_char == 'o' or right_char == 'o':
-                    max_islands += 1  # 최대 1개의 섬 생성 가능
-            else:  # x가 1개면
-                if left_char == 'o' and right_char == 'o':
-                    max_islands += 1  # 최대 1개의 섬 생성 가능
+    return max_islands
+
+def count_total_islands(map_string):
+    # 섬 개수를 계산: 연속된 'g'를 한 섬으로 간주
+    count = 0
+    in_island = False
+    for ch in map_string:
+        if ch == 'g':
+            if not in_island:
+                count += 1
+                in_island = True
         else:
-            # x가 아닌 현재 위치 처리
-            if world_map[i] == 'g':
-                if not is_land:
-                    is_land = True
-            else:  # 'o'
-                if is_land:
-                    current_islands += 1
-                    is_land = False
-            i += 1
-    
-    # 현재까지 확인된 섬의 개수를 최소값으로
-    min_islands = current_islands
-    max_islands += current_islands
-    
-    return min_islands, max_islands
+            in_island = False
+    return count
 
-# 입력 받기
-world_map = input().strip()
+# 입력
+map_string = input()
 
-# 결과 계산 및 출력
-min_val, max_val = get_min_max_islands(world_map)
-print(f"{min_val} {max_val}")
+# 섬 개수 계산
+initial_islands, max_islands = find_islands(map_string)
 
-
+# 결과 출력
+print(initial_islands)
+print(max_islands)

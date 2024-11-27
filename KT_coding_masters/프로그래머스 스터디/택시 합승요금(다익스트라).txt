@@ -1,0 +1,33 @@
+import heapq
+# 최단거리를 구하는 문제 : 다익스트라 
+INF = float('inf')
+def Dijkstra(start,maps):
+    cost= [INF] * (len(maps)+1)
+    cost[start] =0
+    queue = [(0,start)]
+    
+    while queue:
+        cur_cost , cur_node = heapq.heappop(queue)
+        
+        if cost[cur_node] < cur_cost:
+            continue
+        for next_node , next_cost in maps[cur_node]:
+            if cost[next_node]> cur_cost +next_cost:
+                cost[next_node] = cur_cost + next_cost
+                heapq.heappush(queue, (cur_cost + next_cost, next_node))
+    return cost
+    
+def solution(n, s, a, b, fares):
+    answer = INF
+    # 문제에서 주어진 fares를 인접리스트 형태로 바꿈
+    maps = [[] for _ in range(n+1)]
+    for v,u,c in fares:
+        maps[v].append((u, c))
+        maps[u].append((v, c))
+    # i번째(특정 노드)에서 시작해서 모든 정점으로 도착하는 최단거리를 미리 구함 
+    D = [0] + [Dijkstra(i ,maps) for i in range(1, n+1)] 
+    
+    for i in range(1, n+1):
+        answer = min(answer, D[s][i] + D[i][a] + D[i][b])
+    
+    return answer

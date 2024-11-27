@@ -1,31 +1,47 @@
-def dfs(x, y, direction, N, visited, path):
-    if len(path) == N:
-        visited.add(tuple(path))  # 경로의 고유성 확보
-        return
-    
-    # 좌회전 (왼쪽으로 90도)
-    left = (direction - 1) % 4
-    dx, dy = directions[left]
-    new_x, new_y = x + dx, y + dy
-    if (new_x, new_y) not in path:
-        dfs(new_x, new_y, left, N, visited, path + [(new_x, new_y)])
-    
-    # 우회전 (오른쪽으로 90도)
-    right = (direction + 1) % 4
-    dx, dy = directions[right]
-    new_x, new_y = x + dx, y + dy
-    if (new_x, new_y) not in path:
-        dfs(new_x, new_y, right, N, visited, path + [(new_x, new_y)])
+from itertools import product
 
+def rotate_path(path):
+    """경로를 회전한 결과 반환"""
+    rotated = []
+    for x, y in path:
+        rotated.append((-y, x))
+    return rotated
 
-# 상, 우, 하, 좌 방향에 대한 좌표 변화 (시계방향)
-directions = [(0, 1), (1, 0), (0, -1), (-1, 0)]
+def reflect_path(path):
+    """경로를 반사(대칭)한 결과 반환"""
+    reflected = []
+    for x, y in path:
+        reflected.append((-x, y))
+    return reflected
 
-# 입력 받기
-N = int(input().strip())
+def normalize_path(path):
+    """경로를 정규화 (회전, 대칭을 고려하여 가장 작은 형태로 변환)"""
+    candidates = [path]
+    for _ in range(3):  # 90도, 180도, 270도 회전
+        path = rotate_path(path)
+        candidates.append(path)
+        candidates.append(reflect_path(path))
+    return min(candidates)
 
-visited = set()
-dfs(0, 0, 1, N, visited, [(0, 0)])
+def count_unique_paths(n):
+    """N번 이동에서 고유한 산책 경로의 수 계산"""
+    directions = [(1, 0), (0, 1), (-1, 0), (0, -1)]  # 동, 북, 서, 남
+    unique_paths = set()
 
-# 결과 출력
-print(len(visited))
+    def dfs(x, y, steps, path):
+        if steps == n:
+            normalized = normalize_path(path)
+            unique_paths.add(tuple(normalized))
+            return
+
+        for dx, dy in directions:
+            nx, ny = x + dx, y + dy
+            if (nx, ny) not in path:  # 이미 지나간 좌표는 제외
+                dfs(nx, ny, steps + 1, path + [(nx, ny)])
+
+    dfs(0, 0, 0, [(0, 0)])
+    return len(unique_paths)
+
+# 테스트
+print(count_unique_paths(4))  # 출력: 6
+print(count_unique_paths(8))  # 출력: 42

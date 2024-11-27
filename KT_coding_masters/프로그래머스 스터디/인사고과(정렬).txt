@@ -1,0 +1,37 @@
+# 문제접근: 구현 
+# 1. 근무, 동료 모두 낮은경우 인센 못받음 : -1
+# 2. 두 점수합이 높으면 완호보다 등수가 1높음  ()
+
+
+# def solution(scores):
+#     answer = 1
+#     my_a , my_b = scores[0]
+#     my_sum = my_a +my_b
+#     for i in range(1,len(scores)):
+#         if my_a < scores[i][0] and my_b < scores[i][1]:
+#             answer = -1
+#             break 
+#         else:
+#             if my_sum < sum(scores[i]):
+#                 answer +=1
+#     return answer
+# 틀린이유? 완호보다 점수는 높지만  "다른 직원이랑 비교했을 때 근무, 동료 모두 낮은경우 인센 못받음 : -1" 따라서 경쟁대상이 아님
+#   
+# 문제 접근2: 정렬 (근무 태도 (내림차순), 동료평가(오름차순))
+def solution(scores):
+    answer = 1
+    my_a , my_b = scores[0]
+    my_sum = my_a +my_b
+    # 정렬
+    scores.sort(key = lambda x: (-x[0],x[1]))
+    # (인센티브 마지노선) 동료 평가 점수
+    threshold = 0
+    for i in range(len(scores)):
+        if my_a < scores[i][0] and my_b < scores[i][1]:
+            answer = -1
+            break 
+        else:
+            if my_sum < sum(scores[i]) and threshold<= scores[i][1]:
+                answer +=1
+                threshold = scores[i][1]
+    return answer 

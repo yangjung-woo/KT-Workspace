@@ -28,14 +28,14 @@ median_row = rows[len(rows) // 2]
 median_col = cols[len(cols) // 2]
 
 min_dist = float('inf')
-best_location =[]
+best_location =(0,0)
 
 for i in range(n):
     for j in range(n):
         total_dist = sum(abs(row - i) for row in rows) + sum(abs(col - j) for col in cols)
-        best_location.append((total_dist, i + 1, j + 1)) 
-         
-best_location.sort(key=lambda x: (x[0], x[1], x[2]))
+         # 거리 합이 최소면 업데이트 (행, 열 우선 순위)
+        if (total_dist < min_dist or(total_dist == min_dist and (i < best_location[0] or(i == best_location[0] and j < best_location[1])))):
+            min_dist = total_dist
+            best_location = (i, j)
                 
-print(best_location[0][1],best_location[0][2])
-        
+print(best_location[0]+1,best_location[1]+1)

@@ -1,0 +1,29 @@
+# 문제접근: 그래프 문제 
+# a > b > c 연결고리 그래프를 만들면  최단 거리  a > c 이다 
+
+# 플로이드-워셜 알고리즘
+# 임의의 노드 s에서 e까지 가는 데 걸리는 최단거리를 구하기 위해, 
+# s와 e 사이의 노드인 m에 대해 s에서 m까지 가는 데 걸리는 최단거리와 m에서 e까지 가는 데 걸리는 최단거리를 이용한다.
+def solution(n, results):
+    answer = 0
+    board = [[0]*n for _ in range(n)]
+    
+    for a ,b in results:
+        board[a-1][b-1] = 1
+        board[b-1][a-1] = -1
+        
+    # 플로이드 와셜: 3단 for문 단 , 중간 m이 가장 앞으로 와야 함 
+    for m in range(n):
+        for s in range(n):
+            for e in range(n):
+                if s != e  and board[s][e] not in [1,-1] and board[s][m] == board[m][e] ==1:
+                    board[s][e]=1
+                    board[e][s] =-1
+                    board[m][s] =-1
+                    board[e][m] =-1
+    
+    # 정확히 순위를 매길 수 있다 == 모든 상대와 결판이 난다 == board[i][i] 를 제외하곤 1 or -1로 결정나야 함 
+    for row in board:
+        if row.count(0)==1:
+            answer +=1
+    return answer

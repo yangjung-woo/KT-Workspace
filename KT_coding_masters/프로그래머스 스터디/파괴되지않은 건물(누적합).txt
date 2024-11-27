@@ -1,0 +1,64 @@
+# 문제접근 : 구현?
+# 1000x 1000 배열에 공격 , 힐 반영하면 되지않나?
+# 무지성 구현 (효율성 테스트에서 시간 초과) 
+
+# 해답: 누적 합 문제 : 
+# 누적합을 기록하는 배열에 값을 저장한 후 마지막에 한번만 누적합을 계산하여 배열과 더하면되므로 
+# O(1)의 시간복잡도를 가질 수 있게 됩니다.
+
+# def solution(board, skill):
+#     answer = 0
+#     for tp, x1,y1,x2,y2,power in skill:
+        
+#         if tp ==1:# 공격 
+#             for i in range(x1,x2+1):
+#                 for j in range(y1,y2+1):
+#                     board[i][j] -=power
+            
+#         else: # 힐
+#             for i in range(x1,x2+1):
+#                 for j in range(y1,y2+1):
+#                     board[i][j] +=power
+    
+#     for boa in board:
+#         for b in boa:
+#             if b >0:
+#                 answer+=1
+#     return answer
+
+def solution(board, skill):
+    answer=0
+    tmp=[[0]*(len(board[0])+1)for _ in range(len(board) + 1)] # 누적합 기록을 위한 배열
+
+    # 모서리 
+    # -N ... +N
+    # +N ....-N
+    for typ, r1, c1, r2, c2, degree in skill:
+        if typ ==1:# 데미지 
+            tmp[r1][c1] -= degree
+            tmp[r1][c2+1] += degree
+            tmp[r2+1][c1] += degree
+            tmp[r2+1][c2+1] -= degree
+        else: # 힐
+            tmp[r1][c1] += degree
+            tmp[r1][c2+1] -= degree
+            tmp[r2+1][c1] -= degree
+            tmp[r2+1][c2+1] += degree
+        
+    # 행 방향 누적합 
+    for i in range(len(tmp)-1):
+        for j in range(len(tmp[0]) - 1):
+            tmp[i][j+1]+=tmp[i][j]
+    # 열 방향 누적합
+    for j in range(len(tmp[0]) - 1):
+        for i in range(len(tmp) - 1):
+            tmp[i+1][j]+=tmp[i][j]
+            
+            
+    for i in range(len(board)):
+        for j in range(len(board[i])):
+            board[i][j] += tmp[i][j]
+            if board[i][j] > 0:
+                answer += 1
+            
+    return answer
