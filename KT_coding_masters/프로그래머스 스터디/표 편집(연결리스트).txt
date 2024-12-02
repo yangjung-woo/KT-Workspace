@@ -1,0 +1,97 @@
+# 문제접근: 구현? 
+# 0. 현재 선택한 행이 뭔지 알아야 함   k = 
+# 1. "U X": 현재 선택된 행에서 X칸 위에 있는 행을 선택합니다.
+# 2. "D X": 현재 선택된 행에서 X칸 아래에 있는 행을 선택합니다.
+# 3. "C" : 현재 선택된 행을 삭제한 후, 바로 아래 행을 선택합니다. 단, 삭제된 행이 가장 마지막 행인 경우 바로 윗 행을 선택합니다.
+# 4. "Z" : 가장 최근에 삭제된 행을 원래대로 복구합니다. 단, 현재 선택된 행은 바뀌지 않습니다.
+# 효율성 테스트 (땡)
+# def solution(n, k, cmd):
+#     answer = ''
+#     table = ['O']*n
+    
+#     delete_list = []
+#     for cn in cmd:
+        
+#         if len(cn) ==1:
+#             c = cn[0]
+#         else:
+#             c,degree = cn[0],cn[-1]
+        
+#         degree = int(degree)
+#         if c == 'D':
+#             k  = (k + degree) %n
+            
+#         elif c == 'U':
+            
+#             k = k-degree
+            
+#             if k <0:
+#                 k = k + n -1
+        
+#         elif c=='C': # 삭제 
+#             table[k] = 'X'
+#             delete_list.append(k)
+            
+#             # 제일 아래 행이면 
+#             if k == (n - 1) or table[k + 1] == 'X':
+#                 while k > 0 and table[k] == 'X':
+#                     k -= 1
+#             else:
+#                 while k < n - 1 and table[k] == 'X':
+#                     k += 1
+            
+#         elif c == 'Z':  # 가장 최근 삭제된 행 복구
+#             restore = delete_list.pop()
+#             table[restore] = 'O'
+            
+#     return ''.join(table)
+
+# 문제접근 : 연결리스트 
+
+def solution(n, k, cmds):
+    linked_list = {i: [i - 1, i + 1] for i in range(n)}
+    table = ['O'] * n
+    delete = []
+
+    for cmd in cmds:
+        cmd = cmd.split()
+
+        if cmd[0] == 'D':
+            for _ in range(int(cmd[1])):
+                k = linked_list[k][1]
+
+        elif cmd[0] == 'U':
+            for _ in range(int(cmd[1])):
+                k = linked_list[k][0]
+
+        elif cmd[0] == 'C':
+            prev, nxt = linked_list[k]
+            table[k] = 'X'
+            delete.append((prev, k, nxt))
+
+            if nxt == n:
+                k = linked_list[k][0]
+            else:
+                k = linked_list[k][1]
+
+            if prev == -1:
+                linked_list[nxt][0] = prev
+            elif nxt == n:
+                linked_list[prev][1] = nxt
+            else:
+                linked_list[prev][1] = nxt
+                linked_list[nxt][0] = prev
+        else:
+            prev, now, nxt = delete.pop()
+            table[now] = 'O'
+
+            if prev == -1:
+                linked_list[nxt][0] = now
+            elif nxt == n:
+                linked_list[prev][1] = now
+            else:
+                linked_list[prev][1] = now
+                linked_list[nxt][0] = now
+
+    return ''.join([x for x in table])
+

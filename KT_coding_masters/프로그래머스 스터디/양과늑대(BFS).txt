@@ -1,0 +1,43 @@
+# 그래프 탐색, 모든 케이스들을 탐색 > DFS , BFS 
+
+# 가장 익숙한 BFS로 풀어보자 
+from collections import deque
+
+def BFS(info, graph, start):
+    
+    queue = deque()
+    answer = 0
+    queue.append([[start],1,0]) # info[0]의 값은 항상 0입니다. 즉, 0번 노드(루트 노드)에는 항상 양이 있습니다.
+    
+    while queue:
+        nodes , sheep, wolf = queue.popleft()
+        answer = max(answer,sheep)
+        node_set = {node:0 for node in nodes}
+        
+        for node in nodes:
+            for nxt in graph[node]:
+                n_sheep, n_wolf = sheep, wolf
+                if nxt not in node_set:
+                    if info[nxt] == 0:
+                        n_sheep += 1
+                    else:
+                        n_wolf += 1
+                    
+                    if n_sheep > n_wolf: # 양의 수가 늑대보다 많으면 다음 전진 
+                        queue.append([nodes + [nxt], n_sheep, n_wolf])
+    return answer
+
+def solution(info, edges):
+    answer = 0
+    
+    # 그래프 간선 정보 
+    graph = {}
+    for i in range(len(info)): # 양 or 늑대 
+        graph[i] = []
+    
+    for e in edges:
+        start,end = e
+        graph[start].append(end)
+        
+    answer = BFS(info, graph, 0)
+    return answer
