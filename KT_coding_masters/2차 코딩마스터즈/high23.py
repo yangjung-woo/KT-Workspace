@@ -1,32 +1,48 @@
-# 문제접근: 모든 사람이 자신의 원래 위치가 아닌 곳에 배치해야함 >> 완전순열 문제접근
-# DP로 접근 X(메모리 낭비)
-# 점화식: F(n) = (n-1)x(F(n-1)+F(n-2))   % mod
+# 문제접근: 그래프 BFS 탐색
 
-MOD = 998_244_353
+# 두개의 컨테이너를 모두 확인해야 함 
+# queue(컨테이너1, 컨테이너2,이동횟수 )
 
-n = int(input())
-if n == 1:
-    print(0)
-    exit(0)
-elif n == 2:
-    print(1)
-    exit(0)
+from collections import deque
+
+def solve_containers(N, M, S1, D1, S2, D2, roads):
+    # 인접 리스트 생성
+    graph = [[] for _ in range(N + 1)]
+    for u, v in roads:
+        graph[u].append(v)
+        graph[v].append(u)
     
-prev1, prev2 = 0, 1  # D(1) = 0, D(2) = 1
-for i in range(3, n + 1):
-    current = (i - 1) * (prev1 + prev2) % MOD
-    prev1, prev2 = prev2, current
+    # BFS를 위한 큐 초기화: (컨테이너1 위치, 컨테이너2 위치, 이동 횟수)
+    queue = deque([(S1, S2, 0)])
+    visited = set((S1, S2))
+    
+    while queue:
+        pos1, pos2, moves = queue.popleft()
+        
+        # 두 컨테이너가 목표지에 도달했는지 확인
+        if pos1 == D1 and pos2 == D2:
+            return moves
+        
+        # 컨테이너 1 이동
+        for next_pos1 in graph[pos1]:
+            if next_pos1 != pos2 and (next_pos1, pos2) not in visited:
+                visited.add((next_pos1, pos2))
+                queue.append((next_pos1, pos2, moves + 1))
+        
+        # 컨테이너 2 이동
+        for next_pos2 in graph[pos2]:
+            if next_pos2 != pos1 and (pos1, next_pos2) not in visited:
+                visited.add((pos1, next_pos2))
+                queue.append((pos1, next_pos2, moves + 1))
+    
+    # 목표지에 도달할 수 없는 경우
+    return -1
 
-print(prev2)
+# 입력 처리
+N, M = map(int, input().split())
+S1, D1, S2, D2 = map(int, input().split())
+roads = [tuple(map(int, input().split())) for _ in range(M)]
 
-
-# 메모리가 낭비되는 방식  N >=10000이면 리스트를 관리하느라 저장공간이 낭비됨 
-# MOD = 998_244_353
-# n = int(input())
-# dp = [0]*(n+1)
-# dp[1] = 0
-# dp[2] = 1
-# for i in range(3,n+1):
-#     dp[i]  = ((i-1) * (dp[i-1] +dp[i-2]))% MOD
-
-# print(dp[n])
+# 문제 해결 및 출력
+result = solve_containers(N, M, S1, D1, S2, D2, roads)
+print(result)
