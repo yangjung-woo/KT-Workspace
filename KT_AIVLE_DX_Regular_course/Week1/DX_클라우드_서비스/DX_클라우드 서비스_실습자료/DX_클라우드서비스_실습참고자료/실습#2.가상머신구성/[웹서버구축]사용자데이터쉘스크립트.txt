@@ -1,0 +1,6 @@
+#!/bin/bash
+
+yum update –y
+yum install httpd -y
+service httpd start
+echo "My WebServer" > /var/www/html/index.html

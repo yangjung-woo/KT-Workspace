@@ -1,0 +1,7 @@
+#!/bin/bash
+
+yum -y install httpd
+myip=`curl http://169.254.169.254/latest/meta-data/local-ipv4`
+echo "<html><body><h1>What is Cloud Computing?</h1><h3>current host: $myip</h3><p id='time'></p><script>document.getElementById('time').innerHTML = new Date().toLocaleTimeString(); </script></body></html>" > /var/www/html/index.html
+service httpd start
+chkconfig httpd on

@@ -1,0 +1,34 @@
+
+
+Task2. 6번 RDS 접속 명령어
+(아래 user01-rds.ci5dgax7ddcb.ap-northeast-2.rds.amazonaws.com 부분을 본인의 RDS 엔드포인트로 교체)
+
+mysql --user masteradmin --password --host user01-rds.ci5dgax7ddcb.ap-northeast-2.rds.amazonaws.com
+
+
+
+Task3. 1번 직원정보테이블 생성 명령어
+
+CREATE TABLE staffinfo.lab (firstname text, lastname text, phone text);
+
+
+Task3. 2번 테이블 직원정보 입력 명령어
+
+INSERT INTO staffinfo.lab VALUES ("Kildong", "Hong", "010-1234-5678");
+
+INSERT INTO staffinfo.lab VALUES ("Jaeseok", "You", "010-4321-8765");
+
+
+
+Task3. 3번 테이블 저장정보 쿼리 명령어
+
+SELECT * FROM staffinfo.lab; 
+
+
+
+Task3. 3번 테이블 저장정보 쿼리 명령어
+
+
+SELECT * FROM staffinfo.lab WHERE firstname = "Jaeseok";
+
+
