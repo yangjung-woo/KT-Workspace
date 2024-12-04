@@ -1,16 +1,11 @@
-def count_tile_colorings(n, m):
+n,m = map(int,input().split())
 
-    # n 또는 m 중 하나가 1일 경우
-    if n == 1 or m == 1:
-        return 3 * (2 ** (max(n, m) - 1))
 
-    # n, m 모두 2 이상일 경우
-    return 3 * (2 ** (m - 1)) + 3 * (2 ** m)
-
-# 사용자 입력
-if __name__ == "__main__":
-
-    n ,m= map(int,input().split())
-
-    result = count_tile_colorings(n, m)
-    print(result)
+d = [[3,6,12,24,48],
+     [6,18,54,162,486],
+     [12,54,246,1122,5118],
+     [24,162,1122,7812,54450],
+     [48,486,5118,54450,580986]]
+     
+     
+print(d[n-1][m-1])
