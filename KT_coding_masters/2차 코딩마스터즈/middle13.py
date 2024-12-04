@@ -1,47 +1,45 @@
 from itertools import product
 
-def rotate_path(path):
-    """경로를 회전한 결과 반환"""
-    rotated = []
-    for x, y in path:
-        rotated.append((-y, x))
-    return rotated
-
-def reflect_path(path):
-    """경로를 반사(대칭)한 결과 반환"""
-    reflected = []
-    for x, y in path:
-        reflected.append((-x, y))
-    return reflected
-
 def normalize_path(path):
-    """경로를 정규화 (회전, 대칭을 고려하여 가장 작은 형태로 변환)"""
-    candidates = [path]
-    for _ in range(3):  # 90도, 180도, 270도 회전
-        path = rotate_path(path)
-        candidates.append(path)
-        candidates.append(reflect_path(path))
-    return min(candidates)
+    # 경로를 모든 회전과 대칭으로 변환하여 고유 경로를 생성
+    rotations = []
+    for _ in range(4):  # 4번 회전
+        path = [(y, -x) for x, y in path]  # 90도 시계 방향 회전
+        rotations.append(path)
+    flipped = [(-x, y) for x, y in path]  # 대칭
+    for _ in range(4):
+        flipped = [(y, -x) for x, y in flipped]
+        rotations.append(flipped)
+    # 가장 작은 경로를 선택
+    return tuple(min(rotations))
 
-def count_unique_paths(n):
-    """N번 이동에서 고유한 산책 경로의 수 계산"""
-    directions = [(1, 0), (0, 1), (-1, 0), (0, -1)]  # 동, 북, 서, 남
-    unique_paths = set()
+def unique_paths(n):
+    # 방향: 위, 오른쪽, 아래, 왼쪽
+    directions = [(-1, 0), (0, 1), (1, 0), (0, -1)]
 
-    def dfs(x, y, steps, path):
-        if steps == n:
+    def dfs(x, y, d, steps, visited, path):
+        if steps == 0:
+            # 정규화된 경로를 집합에 추가
             normalized = normalize_path(path)
-            unique_paths.add(tuple(normalized))
+            unique_routes.add(normalized)
             return
 
-        for dx, dy in directions:
+        for turn in [-1, 1]:  # 좌회전(-1), 우회전(+1)
+            next_d = (d + turn) % 4
+            dx, dy = directions[next_d]
             nx, ny = x + dx, y + dy
-            if (nx, ny) not in path:  # 이미 지나간 좌표는 제외
-                dfs(nx, ny, steps + 1, path + [(nx, ny)])
 
-    dfs(0, 0, 0, [(0, 0)])
-    return len(unique_paths)
+            if (nx, ny) not in visited:
+                visited.add((nx, ny))
+                dfs(nx, ny, next_d, steps - 1, visited, path + [(nx, ny)])
+                visited.remove((nx, ny))
 
-# 테스트
-print(count_unique_paths(4))  # 출력: 6
-print(count_unique_paths(8))  # 출력: 42
+    unique_routes = set()
+    # 시작점: (0, 0), 초기 방향: 위(0)
+    dfs(0, 0, 0, n, {(0, 0)}, [(0, 0)])
+    return len(unique_routes)
+
+
+# 입력 및 테스트
+n = int(input())
+print(unique_paths(n))
