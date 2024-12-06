@@ -10,7 +10,7 @@ Resources:
 
   ## VPC
 
-  MyVPC:
+  d061076VPC:
     Type: AWS::EC2::VPC
     Properties:
       EnableDnsSupport: true
@@ -18,7 +18,7 @@ Resources:
       CidrBlock: 10.0.0.0/16
       Tags: 
       - Key: "Name"
-        Value: "MyVPC"
+        Value: "d061076VPC"
 
       
   ## Internet Gateway
@@ -29,7 +29,7 @@ Resources:
   VPCGatewayAttachment:
     Type: AWS::EC2::VPCGatewayAttachment
     Properties:
-      VpcId: !Ref MyVPC
+      VpcId: !Ref d061076VPC
       InternetGatewayId: !Ref InternetGateway
   
   ## Public Route Table
@@ -37,7 +37,7 @@ Resources:
   PublicRouteTable:
     Type: AWS::EC2::RouteTable
     Properties:
-      VpcId: !Ref MyVPC
+      VpcId: !Ref d061076VPC
   
   PublicRoute:
     Type: AWS::EC2::Route
@@ -52,7 +52,7 @@ Resources:
   PublicWebSubnet:
     Type: AWS::EC2::Subnet
     Properties:
-      VpcId: !Ref MyVPC
+      VpcId: !Ref d061076VPC
       CidrBlock: 10.0.0.0/24
       AvailabilityZone: !Select 
         - 0
@@ -73,7 +73,7 @@ Resources:
     Properties:
       SubnetId: !Ref PublicWebSubnet
       NetworkAclId: !GetAtt 
-        - MyVPC
+        - d061076VPC
         - DefaultNetworkAcl
   
 ######################
@@ -90,6 +90,6 @@ Outputs:
 
   VPC:
     Description: VPC ID
-    Value: !Ref MyVPC
+    Value: !Ref d061076VPC
     Export:
       Name: !Sub '${AWS::StackName}-VPCID'
