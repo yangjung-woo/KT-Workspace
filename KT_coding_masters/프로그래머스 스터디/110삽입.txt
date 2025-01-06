@@ -1,0 +1,24 @@
+# 1. 110을 뽑아서 , 임의의 위치에 다시 삽입 , 단 최대한 사전순으로 앞에 오도록 만들자 
+# (중요 규칙)  110보다 사전 순으로 늦게 검색되는 문자열은 111밖에 없음 
+# 따라서 모든 110을 뽑아서  111보다 바로 앞에 110을 삽입하면 111> 110 으로 대체 한 효과 
+
+def solution(s):
+    answer = []
+    for string in s:
+        count, idx, stack = 0, 0, ""
+        while idx < len(string):            # 110 찾기
+            if string[idx] == "0" and stack[-2:] == "11":
+                stack = stack[:-2]
+                count += 1
+            else:
+                stack += string[idx]
+            idx += 1
+
+        idx = stack.find("111")             # 110이 빠진 string에서 111 찾기
+        if idx == -1:                       # 0뒤에 110 반복해 붙이기
+            idx = stack.rfind('0')
+            stack = stack[:idx+1]+"110"*count+stack[idx+1:]
+        else:                               # 111앞에 110 반복해 붙이기
+            stack = stack[:idx]+"110"*count+stack[idx:]
+        answer.append(stack)
+    return answer

@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>웹사이트 레이아웃</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+        }
+        .container {
+            display: grid;
+            grid-template-columns: 200px 1fr 300px;
+            grid-template-rows: auto 1fr;
+            height: 100vh;
+            gap: 10px;
+        }
+        .nav {
+            grid-row: 1 / span 2;
+            background-color: #e0e0e0;
+            padding: 20px;
+        }
+        .search-bar {
+            grid-column: 2;
+            background-color: #f0f0f0;
+            padding: 10px;
+            text-align: center;
+        }
+        .table-view {
+            grid-column: 2;
+            background-color: #ffffff;
+            border: 1px solid #ccc;
+            padding: 20px;
+            overflow: auto;
+        }
+        .charts {
+            grid-column: 3;
+            background-color: #f8f8f8;
+            padding: 20px;
+            border-left: 1px solid #ccc;
+        }
+        .circle {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background-color: #ccc;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 10px auto;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="nav">
+            <h3>좌측 네비게이션 바</h3>
+        </div>
+        <div class="search-bar">
+            <h4>기간, 차종, 이름 검색</h4>
+        </div>
+        <div class="table-view">
+            <h4>CSV 파일 내용 표출</h4>
+            <input type="file" id="csvFile" accept=".csv" style="margin-bottom: 10px;">
+            <div id="csvTable"></div>
+        </div>
+        <div class="charts">
+            <h4>파이차트? 꺾은선 그래프+막대 그래프</h4>
+        </div>
+        <div class="circle">
+            관
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('csvFile').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                const text = event.target.result;
+                const rows = text.split('\n');
+                let html = '<table border="1" style="width: 100%; border-collapse: collapse;">';
+
+                rows.forEach((row, index) => {
+                    const cells = row.split(',');
+                    html += '<tr>';
+                    cells.forEach(cell => {
+                        const decodedCell = decodeURIComponent(escape(cell)); // Handle UTF-8 decoding
+                        if (index === 0) {
+                            html += `<th style="padding: 8px; text-align: left;">${decodedCell}</th>`;
+                        } else {
+                            html += `<td style="padding: 8px;">${decodedCell}</td>`;
+                        }
+                    });
+                    html += '</tr>';
+                });
+
+                html += '</table>';
+                document.getElementById('csvTable').innerHTML = html;
+            };
+            reader.readAsText(file, 'UTF-8'); // Specify UTF-8 encoding
+        });
+    </script>
+</body>
+</html>
