@@ -1,0 +1,23 @@
+1. 본 모델은 data01_train.csv , data01.test.csv 파일로 학습 및 검증된 모델입니다. 아래 2가지 전처리가 필요합니다.
+
+
+
+2. (필수) 모델을 불러와서 실행하시되 다음 2가지 전처리가 꼭 필요합니다
+
+2-1. 스케일링 된 data01_train 데이터를 학습한 모델입니다.. 평가용 데이터도 스케일링을 해줘야합니다 
+	scaler = MinmaxScaler()
+	scaler.fit(x_train) #스케일러는 data01.train 데이터를 기준으로 학습해줘야합니다
+	x_test = scaler.transform(x_test) # x_test 를 스케일링 
+
+2-2. y_label (Activity열)은 0~5 숫자형 범주로 매핑했습니다. 평가할때도 y_test를 매핑해줘야합니다 
+
+	activity_mapping = {
+    		'LAYING': 0,
+    		'STANDING': 1,
+   		 'SITTING': 2,
+  		  'WALKING': 3,
+   		 'WALKING_UPSTAIRS': 4,
+   		 'WALKING_DOWNSTAIRS': 5
+		}
+	y_test = y_test.map(activity_mapping)
+	
